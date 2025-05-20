@@ -22,18 +22,8 @@ class SearchQuerySerializer(serializers.ModelSerializer):
 
 class ExternalAPIRequestSerializer(serializers.Serializer):
     """مسلسل لطلبات API الخارجي"""
-    query = serializers.CharField(required=True)
-    latitude = serializers.FloatField(required=True)
-    longitude = serializers.FloatField(required=True)
-    radius = serializers.IntegerField(required=False, default=1000)
-    
-    def validate_radius(self, value):
-        """التحقق من أن الشعاع ضمن الحدود المسموحة"""
-        if value <= 0:
-            raise serializers.ValidationError("الشعاع يجب أن يكون أكبر من صفر")
-        if value > 50000:  # 50 كيلومتر كحد أقصى
-            raise serializers.ValidationError("الشعاع يجب أن يكون أقل من 50000 متر")
-        return value
+    prompt = serializers.CharField(required=True)
+    # تمت إزالة الحقول الأخرى واستبدالها بحقل prompt فقط
 
 class PlaceResultSerializer(serializers.Serializer):
     """مسلسل لنتائج المكان من API الخارجي"""

@@ -20,21 +20,24 @@ class NearbySearchView(APIView):
     """واجهة للبحث عن الأماكن القريبة"""
     
     def post(self, request):
+        
         # التحقق من صحة البيانات المدخلة
         serializer = ExternalAPIRequestSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         # استخراج البيانات المتحقق منها
-        query = serializer.validated_data['query']
-        latitude = serializer.validated_data['latitude']
-        longitude = serializer.validated_data['longitude']
-        radius = serializer.validated_data.get('radius', 1000)
+        prompt = serializer.validated_data['prompt']
+        
+        # قيم افتراضية للإحداثيات
+        latitude = 24.7136  # قيمة افتراضية (مثال: الرياض)
+        longitude = 46.6753  # قيمة افتراضية
+        radius = 1000  # قيمة افتراضية
         
         # استدعاء API الخارجي
         try:
             raw_results = ExternalAPIService.search_nearby(
-                query=query,
+                query=prompt,
                 latitude=latitude,
                 longitude=longitude,
                 radius=radius
@@ -47,7 +50,7 @@ class NearbySearchView(APIView):
             with transaction.atomic():
                 # حفظ استعلام البحث
                 search_query = SearchQuery.objects.create(
-                    query=query,
+                    query=prompt,
                     latitude=latitude,
                     longitude=longitude,
                     radius=radius

@@ -11,6 +11,7 @@ class ExternalAPIService:
     
     @staticmethod
     def search_nearby(query, latitude, longitude, radius=1000):
+        
         """
         البحث عن الأماكن القريبة باستخدام API الخارجي
         
@@ -25,17 +26,15 @@ class ExternalAPIService:
         """
         api_url = settings.EXTERNAL_API['URL']
         
-        # تجهيز بيانات الطلب
+        # تجهيز بيانات الطلب - فقط حقل prompt
         payload = {
-            "query": query,
-            "latitude": latitude,
-            "longitude": longitude,
-            "radius": radius
+            "prompt": query
         }
         
         try:
-            # إرسال الطلب إلى API الخارجي
-            response = requests.post(api_url, json=payload)
+           
+            # إرسال الطلب إلى API الخارجي مع تجاهل التحقق من SSL
+            response = requests.post(api_url, json=payload, verify=False)
             
             # التحقق من نجاح الطلب
             response.raise_for_status()
